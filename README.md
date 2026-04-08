@@ -9,6 +9,12 @@ Mr-Manuel:
 Clinton Goudie-Nice, cursoragent:
 - fix: use dbus.SystemBus() singleton to prevent D-Bus connection leaks. The custom SystemBus and SessionBus classes inherit from dbus.bus.BusConnection, which creates a new connection to the D-Bus daemon on every instantiation. When the GLib main loop is set as the default (via DBusGMainLoop), these connections are pinned in memory by C-level GLib watch/timeout references that Python's GC cannot reach. Over time this exhausts the per-UID connection limit (org.freedesktop.DBus.Error.LimitsExceeded).
 
+BLE support:
+- Added support for BLE (Bluetooth Low Energy) batteries from [dbus-serialbattery](https://github.com/mr-manuel/venus-os_dbus-serialbattery) (e.g. Jkbms_Ble, LltJbd_Ble, LiTime_Ble, Kilovault_Ble)
+- Added `BLE_SEARCH_DELAY` config option: initial delay before battery search to allow BLE connections to establish after boot
+- Added connection type logging (Serial/BLE/CAN/MQTT) for each detected battery
+- Updated `SEARCH_TRIALS` documentation to recommend higher values for BLE setups
+
 ## Version 4.0.20251009
 
 Mr-Manuel:
@@ -76,10 +82,19 @@ https://github.com/Dr-Gigavolt/dbus-aggregate-batteries/issues/24
 ## Function
 
 On start, the program searches for DBus services:
-- all Serial Batteries. Smart Shunts as battery current monitor are neither supported nor needed, you can activate precise current measurement by Victron devices if the precision of your BMS is not sufficient.
+- all Serial Batteries (connected via RS232/RS485/TTL, BLE, CAN, or MQTT through [dbus-serialbattery](https://github.com/mr-manuel/venus-os_dbus-serialbattery)). Smart Shunts as battery current monitor are neither supported nor needed, you can activate precise current measurement by Victron devices if the precision of your BMS is not sufficient.
 - one Smart Shunt for DC load (option)
 - Multiplus or Quattro (or cluster of them) for DC current measurement
 - all solar chargers (SmartSolar, BlueSolar, MPPT RS) for DC current measurement
+
+### BLE (Bluetooth) batteries
+
+BLE-connected BMS from [dbus-serialbattery](https://github.com/mr-manuel/venus-os_dbus-serialbattery) (e.g. Jkbms_Ble, LltJbd_Ble, LiTime_Ble) are fully supported. They register on D-Bus as `com.victronenergy.battery.ble_<mac>` with ProductName `SerialBattery(<type>)`, which the aggregation driver detects automatically.
+
+**Configuration tips for BLE batteries:**
+- BLE connections can take 30+ seconds to establish after system boot. Increase `SEARCH_TRIALS` (e.g. to 60) or set `BLE_SEARCH_DELAY` (e.g. to 30-45) in `config.ini` to give BLE batteries enough time to connect before the search begins.
+- If you experience intermittent read errors, increase `READ_TRIALS` as well.
+- The driver logs the connection type (Serial/BLE/CAN/MQTT) for each detected battery to help with debugging.
 
 The data from DBus are collected, processed and the results are sent back to DBus once per second.
 Dbus monitor defined in dbusmon.py is used instead of VeDbusItemImport which was very resource hungry (since V2.0). I strongly recommend to everyone modifying the code to keep this technique.

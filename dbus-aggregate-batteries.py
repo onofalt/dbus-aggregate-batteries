@@ -366,6 +366,9 @@ class DbusAggBatService(object):
                 logging.debug(f"Could not read CustomName from settings: {repr(exception_object)} of type {exception_type} in {file} line #{line}")
 
             # search batteries on DBus if present
+            if settings.BLE_SEARCH_DELAY > 0:
+                logging.info("BLE search delay: waiting %d seconds for BLE batteries to connect..." % settings.BLE_SEARCH_DELAY)
+                tt.sleep(settings.BLE_SEARCH_DELAY)
             GLib.timeout_add_seconds(settings.UPDATE_INTERVAL_FIND_DEVICES, self._find_batteries)
             # all OK, stop calling this function
             return False
@@ -449,6 +452,20 @@ class DbusAggBatService(object):
                 if battery_service:
                     if (productName is not None) and (settings.BATTERY_PRODUCT_NAME in productName):
                         logging.info('   |- Correct battery product name "%s" found' % productName)
+
+                        # Detect connection type from service name
+                        service_suffix = service.split(".")[-1] if "." in service else ""
+                        if service_suffix.startswith("ble_"):
+                            conn_type = "BLE"
+                        elif service_suffix.startswith("tty"):
+                            conn_type = "Serial"
+                        elif service_suffix.startswith("can"):
+                            conn_type = "CAN"
+                        elif service_suffix.startswith("mqtt_"):
+                            conn_type = "MQTT"
+                        else:
+                            conn_type = "Unknown"
+                        logging.info("   |- Connection type: %s" % conn_type)
 
                         # Custom name, if exists
                         try:
