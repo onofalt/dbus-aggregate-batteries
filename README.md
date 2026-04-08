@@ -1,3 +1,14 @@
+## Version 4.2.20260408
+
+BLE support:
+- Added support for BLE (Bluetooth Low Energy) batteries from [dbus-serialbattery](https://github.com/mr-manuel/venus-os_dbus-serialbattery) (e.g. Jkbms_Ble, LltJbd_Ble, LiTime_Ble, Kilovault_Ble)
+- Added `BLE_SEARCH_DELAY` config option: initial delay before battery search to allow BLE connections to establish after boot
+- Added connection type logging (Serial/BLE/CAN/MQTT) for each detected battery
+- Updated `SEARCH_TRIALS` documentation to recommend higher values for BLE setups
+
+Bug fixes:
+- Fix file handle leaks and improve state file robustness (thenebu)
+
 ## Version 4.1.20260227
 
 Mr-Manuel:
@@ -8,12 +19,6 @@ Mr-Manuel:
 
 Clinton Goudie-Nice, cursoragent:
 - fix: use dbus.SystemBus() singleton to prevent D-Bus connection leaks. The custom SystemBus and SessionBus classes inherit from dbus.bus.BusConnection, which creates a new connection to the D-Bus daemon on every instantiation. When the GLib main loop is set as the default (via DBusGMainLoop), these connections are pinned in memory by C-level GLib watch/timeout references that Python's GC cannot reach. Over time this exhausts the per-UID connection limit (org.freedesktop.DBus.Error.LimitsExceeded).
-
-BLE support:
-- Added support for BLE (Bluetooth Low Energy) batteries from [dbus-serialbattery](https://github.com/mr-manuel/venus-os_dbus-serialbattery) (e.g. Jkbms_Ble, LltJbd_Ble, LiTime_Ble, Kilovault_Ble)
-- Added `BLE_SEARCH_DELAY` config option: initial delay before battery search to allow BLE connections to establish after boot
-- Added connection type logging (Serial/BLE/CAN/MQTT) for each detected battery
-- Updated `SEARCH_TRIALS` documentation to recommend higher values for BLE setups
 
 ## Version 4.0.20251009
 
@@ -46,7 +51,7 @@ Please note I have nothing else and cannot offer support with other hardware.
 ## Installation
 - Execute these commands to download the driver from the internet and install it:
   ```bash
-  wget -O /tmp/install.sh https://raw.githubusercontent.com/Dr-Gigavolt/dbus-aggregate-batteries/main/install.sh
+  wget -O /tmp/install.sh https://raw.githubusercontent.com/onofalt/dbus-aggregate-batteries/main/install.sh
 
   bash /tmp/install.sh
   ```
@@ -77,7 +82,7 @@ After debugging start the service again with `svc -u /service/dbus-aggregate-bat
 To check the logs run `/data/apps/dbus-aggregate-batteries/get-logs.sh` and exit again with `CTRL + C`.
 
 If you wish to mount the code into `/opt/victronenergy/` follow these instructions:
-https://github.com/Dr-Gigavolt/dbus-aggregate-batteries/issues/24
+https://github.com/onofalt/dbus-aggregate-batteries/issues/24
 
 ## Function
 
