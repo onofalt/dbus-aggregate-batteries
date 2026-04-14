@@ -8,5 +8,11 @@
     "python.analysis.extraPaths": [
         "ext",
         "ext/velib_python",
-    ]
+    ],
+    "chat.tools.terminal.autoApprove": {
+        "git add": true,
+        "git commit": true,
+        "git tag": true,
+        "git push": true
+    }
 }

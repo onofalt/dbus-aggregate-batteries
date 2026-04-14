@@ -152,13 +152,13 @@ if [ -z "$1" ]; then
     echo -n "Fetch available version numbers..."
 
     # stable
-    latest_release_stable=$(curl -s https://api.github.com/repos/Dr-Gigavolt/dbus-aggregate-batteries/releases/latest | sed -nE 's/.*"tag_name": "([^"]+)".*/\1/p')
+    latest_release_stable=$(curl -s https://api.github.com/repos/onofalt/dbus-aggregate-batteries/releases/latest | sed -nE 's/.*"tag_name": "([^"]+)".*/\1/p')
 
     # beta
-    latest_release_beta=$(curl -s https://api.github.com/repos/Dr-Gigavolt/dbus-aggregate-batteries/releases | sed -nE 's/.*"tag_name": "([^"]+(rc|beta))".*/\1/p' | head -n 1)
+    latest_release_beta=$(curl -s https://api.github.com/repos/onofalt/dbus-aggregate-batteries/releases | sed -nE 's/.*"tag_name": "([^"]+(rc|beta))".*/\1/p' | head -n 1)
 
     # main branch
-    latest_release_nightly=$(curl -s https://raw.githubusercontent.com/Dr-Gigavolt/dbus-aggregate-batteries/refs/heads/main/dbus-aggregate-batteries.py | grep "VERSION =" | awk -F'"' '{print "v" $2}')
+    latest_release_nightly=$(curl -s https://raw.githubusercontent.com/onofalt/dbus-aggregate-batteries/refs/heads/main/dbus-aggregate-batteries.py | grep "VERSION =" | awk -F'"' '{print "v" $2}')
 
     # done
     echo " done."
@@ -269,7 +269,7 @@ if [ "$version" = "stable" ]; then
     # download stable release
     echo "Downloading stable release..."
     echo ""
-    curl -s https://api.github.com/repos/Dr-Gigavolt/dbus-aggregate-batteries/releases/latest | sed -nE 's/.*"zipball_url": "([^"]+)".*/\1/p' | wget -O /tmp/dbus-aggregate-batteries.zip -i -
+    curl -s https://api.github.com/repos/onofalt/dbus-aggregate-batteries/releases/latest | sed -nE 's/.*"zipball_url": "([^"]+)".*/\1/p' | wget -O /tmp/dbus-aggregate-batteries.zip -i -
     # check if the download was successful
     if [ $? -ne 0 ]; then
         echo "ERROR: Error during downloading the ZIP file. Please try again."
@@ -283,7 +283,7 @@ if [ "$version" = "beta" ]; then
     # download beta release
     echo "Downloading beta release..."
     echo ""
-    curl -s https://api.github.com/repos/Dr-Gigavolt/dbus-aggregate-batteries/releases/tags/$latest_release_beta | sed -nE 's/.*"zipball_url": "([^"]+)".*/\1/p' | wget -O /tmp/dbus-aggregate-batteries.zip -i -
+    curl -s https://api.github.com/repos/onofalt/dbus-aggregate-batteries/releases/tags/$latest_release_beta | sed -nE 's/.*"zipball_url": "([^"]+)".*/\1/p' | wget -O /tmp/dbus-aggregate-batteries.zip -i -
     # check if the download was successful
     if [ $? -ne 0 ]; then
         echo "ERROR: Error during downloading the ZIP file. Please try again."
@@ -321,7 +321,7 @@ if [ "$version" = "nightly" ] || [ "$version" = "specific_branch" ]; then
     if [ "$version" = "specific_branch" ]; then
 
         # fetch branches from Github
-        branches=$(curl -s https://api.github.com/repos/Dr-Gigavolt/dbus-aggregate-batteries/branches | sed -nE 's/.*"name": "([^"]+)".*/\1/p')
+        branches=$(curl -s https://api.github.com/repos/onofalt/dbus-aggregate-batteries/branches | sed -nE 's/.*"name": "([^"]+)".*/\1/p')
 
         # create a select menu
         echo
@@ -347,7 +347,7 @@ if [ "$version" = "nightly" ] || [ "$version" = "specific_branch" ]; then
     # download driver
     echo "Downloading branch \"$branch\"..."
     echo ""
-    wget -O /tmp/dbus-aggregate-batteries.zip https://github.com/Dr-Gigavolt/dbus-aggregate-batteries/archive/refs/heads/$branch.zip
+    wget -O /tmp/dbus-aggregate-batteries.zip https://github.com/onofalt/dbus-aggregate-batteries/archive/refs/heads/$branch.zip
     # check if the download was successful
     if [ $? -ne 0 ]; then
         echo "ERROR: Error during downloading the ZIP file. Please try again."
