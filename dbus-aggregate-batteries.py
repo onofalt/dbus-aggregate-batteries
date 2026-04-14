@@ -450,7 +450,11 @@ class DbusAggBatService(object):
                     productName = self._dbusMon.dbusmon.get_value(service, settings.BATTERY_PRODUCT_NAME_PATH)
                     shuntName = self._dbusMon.dbusmon.get_value(service, settings.SMARTSHUNT_INSTANCE_NAME_PATH)
                 if battery_service:
-                    if (productName is not None) and (settings.BATTERY_PRODUCT_NAME in productName):
+                    # Permetti anche il match esatto del ProductName dal config.ini
+                    if (productName is not None) and (
+                        settings.BATTERY_PRODUCT_NAME in productName or
+                        productName == settings.BATTERY_PRODUCT_NAME
+                    ):
                         logging.info('   |- Correct battery product name "%s" found' % productName)
 
                         # Detect connection type from service name
